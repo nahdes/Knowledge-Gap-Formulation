@@ -65,10 +65,8 @@ This directly improves how I design and evaluate trained judges/critics in agent
 
 Located in [`pair_DAY_1/`](pair_DAY_1/):
 
-- `question.md` — Yakob’s question (LoRA inference)
-- `question_general.md` — My question (preference accuracy vs rejection sampling lift)
-- `explainer_lora_inference.md` — My explainer for Yakob
-- `explainer.md` — Yakob’s explainer for me
+- `question.md` 
+- `explainer.md` 
 - `morning_call_summary.md`
 - `evening_call_summary.md`
 - `signoff.md`
