@@ -80,7 +80,7 @@ Located in [`pair_DAY_1/`](pair_DAY_1/):
 
 - **Blog Post 1:** [Link to be added]
 - **Blog Post 2:** [Link to be added]
-- **Tweet Thread:** [Link to be added]
+- **Tweet Thread:** [https://x.com/DesalegnNa91842/status/2051733293607879042?s=20]
 
 ---
 
