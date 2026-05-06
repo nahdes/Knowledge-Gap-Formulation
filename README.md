@@ -32,6 +32,7 @@ Week 12 uses a structured peer-teaching format. Each day, two participants take 
 **Question received from Yakob:** How does LoRA actually modify the transformer forward pass, and is system-prompt simulation a valid proxy for real adapter inference?
 
 **Key points delivered:**
+
 - The adapter modifies weight matrices: `W_eff = W₀ + (α/r)·B@A`; system-prompt simulation modifies input activations — fundamentally different parts of the computation graph.
 - Merged and unmerged adapter inference are numerically identical (difference ≤ floating-point epsilon).
 - For rule-based rubric dimensions (string-matching), system-prompt simulation is a valid proxy. For distributional dimensions (LLM sub-judge), it is unvalidated.
@@ -60,10 +61,11 @@ Week 12 uses a structured peer-teaching format. Each day, two participants take 
 **Question received from Mikias:** What distinguishes a transient from a permanent API failure, how does exponential backoff with jitter prevent retry storms, what is a retry budget, and would the same retry strategy apply to all three affected files (`email_handler.py`, `calendar_handler.py`, `enrichment.py`)?
 
 **Key points delivered:**
+
 - Retry on `429`, `5xx`, transport exceptions. Raise immediately on any other `4xx`.
 - Exponential backoff + jitter desynchronizes concurrent retriers; AWS measured 75% reduction in retry call volume vs. fixed-interval.
 - `min(delay, CAP)` is the ceiling that keeps worst-case blocked time predictable.
-- The three files need *different* strategies: email (safe with idempotency key), scraper (safe, idempotent read), booking (unsafe to retry naively — missing idempotency key is the actual bug).
+- The three files need _different_ strategies: email (safe with idempotency key), scraper (safe, idempotent read), booking (unsafe to retry naively — missing idempotency key is the actual bug).
 
 **Artifacts:** [`pair_DAY_2/`](pair_DAY_2/)
 
@@ -99,6 +101,6 @@ Knowledge-Gap-Formulation/
 ## Public Artifacts
 
 - **Tweet Thread (Day 1):** [https://x.com/DesalegnNa91842/status/2051733293607879042?s=20]
-- **Tweet Thread (Day 2):** [Link to be added]
+- **Tweet Thread (Day 2):** [https://x.com/DesalegnNa91842/status/2052082732239339628?s=20ss]
 - **Blog Post (Day 1):** [Link to be added]
 - **Blog Post (Day 2):** [Link to be added]
