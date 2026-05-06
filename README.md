@@ -1,110 +1,104 @@
-# TRP1 Week 12 — Day 1: Inference-time Mechanics
+# TRP1 Week 12 — Knowledge Gap Formulation
 
-**Topic:** Inference-time mechanics  
-**Date:** May 4–5, 2026  
-**My Role:** Asker + Explainer  
-**Partner:** Yakob Dereje
-
----
-
-## Executive Summary
-
-On Day 1 I worked both sides of the pair:
-
-- **As Explainer**: Delivered a detailed technical explainer to Yakob on **LoRA inference mechanics** (merged vs unmerged vs system-prompt simulation).
-- **As Asker**: Received a high-quality explainer from Yakob on why high preference accuracy often fails to translate into rejection-sampling lift.
-
-Both explainers directly closed genuine gaps in our Week 11 portfolio work.
+**Program:** 10 Academy TRP1  
+**Week:** 12  
+**Dates:** May 5–6, 2026  
+**Participant:** Nahom Desalegn
 
 ---
 
-## 1. Explainer I Wrote (for Yakob Dereje)
+## Overview
 
-**Question Received:** [`pair_DAY_1/question.md`](pair_DAY_1/question.md)
-
-**My Explainer:** [`pair_DAY_1/explainer_lora_inference.md`](pair_DAY_1/explainer_lora_inference.md)
-
-### Key Insights Delivered
-
-- How LoRA matrices **A** and **B** modify the transformer forward pass: `W_eff = W₀ + (α/r)·B@A`
-- Merged and unmerged inference are **numerically identical** (difference at floating-point epsilon).
-- System-prompt simulation modifies **input activations**, while LoRA modifies **weights** — fundamentally different mechanisms.
-- Provided a precise validity boundary and ready-to-use revised paragraph for his `model_card.md`.
+Week 12 uses a structured peer-teaching format. Each day, two participants take turns as **Asker** and **Explainer**. The Asker formulates a precise knowledge gap tied to their actual project work; the Explainer closes it with a focused, mechanism-driven explainer. Every session ends with a grounding commit: a concrete edit to a real portfolio artifact that pays the insight back into the work.
 
 ---
 
-## 2. Explainer I Received (from Yakob Dereje)
+## Day 1 — Inference-time Mechanics
 
-**My Question:** [`pair_DAY_1/question_general.md`](pair_DAY_1/question_general.md)
+**Date:** May 5, 2026  
+**Partner:** Yakob Dereje  
+**Status:** Complete ✅
 
-**Explainer Received:** [`pair_DAY_1/explainer.md`](pair_DAY_1/explainer.md)
+### Nahom as Asker
 
-### Key Insights Received
+**Question:** Why did the SimPO critic (96.9% preference accuracy on 31 validation pairs) produce near-zero lift — ΔA = +0.0025, p=0.40, with 17/52 ties — when used as a rejection-sampling gate on sealed held-out tasks?
 
-- The core reason high preference accuracy fails to predict rejection-sampling lift: **Margin Distribution Mismatch**.
-- Training pairs have large, deliberate quality margins; same-temperature same-model candidates have very low variance.
-- Practical diagnostic: Compute the standard deviation of critic scores across the candidate pool (`score_std < 0.1` → generation problem).
-- Clear decision rule: Whether to fix the **generator** (diversity) or the **critic** (training).
+**Gap closed:** The root cause is **margin distribution mismatch**. Training pairs have large, deliberate quality gaps by construction; same-model fixed-temperature inference candidates have near-zero score variance. The critic is world-class at distinguishing bottles of different vintages; it cannot rank eight glasses poured from the same bottle. Diagnostic: if `std(candidate_scores) < 0.1`, the bottleneck is generation diversity, not critic quality.
 
-This directly improves how I design and evaluate trained judges/critics in agent systems.
+**Grounding commit:** Replaced the vague "further investigation needed" paragraph in `tenacious-bench-v0.1/model_card.md` with a mechanism-driven evaluation methodology note, including the `diagnose_candidate_pool()` diagnostic and a deployment-side bottleneck classification.
 
----
+### Nahom as Explainer
 
-## Grounding Commits to My Portfolio
+**Question received from Yakob:** How does LoRA actually modify the transformer forward pass, and is system-prompt simulation a valid proxy for real adapter inference?
 
-**File:** [`pair_DAY_1/grounding_commit.md`](pair_DAY_1/grounding_commit.md)
+**Key points delivered:**
+- The adapter modifies weight matrices: `W_eff = W₀ + (α/r)·B@A`; system-prompt simulation modifies input activations — fundamentally different parts of the computation graph.
+- Merged and unmerged adapter inference are numerically identical (difference ≤ floating-point epsilon).
+- For rule-based rubric dimensions (string-matching), system-prompt simulation is a valid proxy. For distributional dimensions (LLM sub-judge), it is unvalidated.
+- Provided a ready-to-use revised limitation paragraph for Yakob's `model_card.md`.
 
-**Changes Made:**
-
-- Updated the **Limitations** section in `The_Sales_Agent_Evaluation_Bench/model_card.md` with technically accurate language about system-prompt vs real LoRA inference (from the explainer I wrote).
-- Improved evaluation methodology documentation and validity boundaries for my critic/rejection sampling setup (informed by Yakob’s explainer).
-
----
-
-## Daily Deliverables
-
-Located in [`pair_DAY_1/`](pair_DAY_1/):
-
-- `question.md` 
-- `explainer.md` 
-- `morning_call_summary.md`
-- `evening_call_summary.md`
-- `signoff.md`
-- `grounding_commit.md`
-- `sources.md`
-- `thread.md` — Tweet thread (ready for publication)
+**Artifacts:** [`pair_DAY_1/`](pair_DAY_1/)
 
 ---
 
-## Public Artifacts (to be published)
+## Day 2 — Agent and Tool-Use Internals
 
-- **Blog Post 1:** [Link to be added]
-- **Blog Post 2:** [Link to be added]
-- **Tweet Thread:** [https://x.com/DesalegnNa91842/status/2051733293607879042?s=20]
+**Date:** May 6, 2026  
+**Partner:** Mikias Dagem  
+**Status:** Complete ✅
 
----
+### Nahom as Asker
 
-## What I Learned
+**Question:** At the token level, when a model using function-calling selects a tool, is the description string part of the selection computation — or is it processed only after the tool-name token is already committed?
 
-- Deep understanding of LoRA forward-pass mechanics and when system prompts are valid proxies.
-- The structural **margin distribution mismatch** that explains the common failure mode of rejection sampling systems.
-- A reusable diagnostic and decision framework for any critic-gated system (extremely generalizable for future FDE work).
+**Gap closed:** Tool schemas are serialized into the context window during prefill. Because the transformer computes attention across the full context before generating any token, description strings are causally upstream of the tool-name logit distribution — they shape which tool gets selected, not just how arguments are filled. Some inference engines apply a token mask at the name position (constrained decoding), which changes when description quality matters most.
+
+**Grounding commit:** Added a defended paragraph to `KNOWLEDGE.md §Compose` explaining the text-completion vs. function-calling trade-off mechanistically — including why adding unused tool schemas has a real context/latency cost.
+
+### Nahom as Explainer
+
+**Question received from Mikias:** What distinguishes a transient from a permanent API failure, how does exponential backoff with jitter prevent retry storms, what is a retry budget, and would the same retry strategy apply to all three affected files (`email_handler.py`, `calendar_handler.py`, `enrichment.py`)?
+
+**Key points delivered:**
+- Retry on `429`, `5xx`, transport exceptions. Raise immediately on any other `4xx`.
+- Exponential backoff + jitter desynchronizes concurrent retriers; AWS measured 75% reduction in retry call volume vs. fixed-interval.
+- `min(delay, CAP)` is the ceiling that keeps worst-case blocked time predictable.
+- The three files need *different* strategies: email (safe with idempotency key), scraper (safe, idempotent read), booking (unsafe to retry naively — missing idempotency key is the actual bug).
+
+**Artifacts:** [`pair_DAY_2/`](pair_DAY_2/)
 
 ---
 
 ## Repository Structure
 
-```bash
-TRP1-Week12-Day1/
-├── pair_DAY_1/
-│   ├── question.md
-│   ├── question_general.md
-│   ├── explainer_lora_inference.md
-│   ├── explainer.md
-│   ├── grounding_commit.md
-│   └── ...
-├── README.md
-├── synthesis.md
-├── canonical_list.md
-└── portfolio_update.md
 ```
+Knowledge-Gap-Formulation/
+├── README.md
+├── pair_DAY_1/
+│   ├── question.md               ← Nahom's question to Yakob
+│   ├── explainer.md              ← Nahom's LoRA explainer for Yakob
+│   ├── morning_call_summary.md
+│   ├── evening_call_summary.md
+│   ├── signoff.md
+│   ├── grounding_commit.md
+│   ├── sources.md
+│   └── thread.md
+└── pair_DAY_2/
+    ├── question.md               ← Nahom's question to Mikias
+    ├── explainer.md              ← Nahom's retry-logic explainer for Mikias
+    ├── morning_call_summary.md
+    ├── evening_call_summary.md
+    ├── signoff.md
+    ├── grounding_commit.md
+    ├── sources.md
+    └── thread.md
+```
+
+---
+
+## Public Artifacts
+
+- **Tweet Thread (Day 1):** [https://x.com/DesalegnNa91842/status/2051733293607879042?s=20]
+- **Tweet Thread (Day 2):** [Link to be added]
+- **Blog Post (Day 1):** [Link to be added]
+- **Blog Post (Day 2):** [Link to be added]
