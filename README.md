@@ -2,7 +2,7 @@
 
 **Program:** 10 Academy TRP1  
 **Week:** 12  
-**Dates:** May 5–6, 2026  
+**Dates:** May 5–7, 2026  
 **Participant:** Nahom Desalegn
 
 ---
@@ -71,6 +71,36 @@ Week 12 uses a structured peer-teaching format. Each day, two participants take 
 
 ---
 
+## Day 3 — Training and Post-Training Mechanics
+
+**Date:** May 7, 2026  
+**Partner:** Gemechis Worku  
+**Status:** Complete ✅
+
+### Nahom as Asker
+
+**Question:** In `train_critic.py` the LoRA adapter uses `lora_r=16`, `lora_alpha=32`, targeting all seven projection modules — inherited from Unsloth defaults. What does each module actually contribute to a preference-discrimination task, how does rank bound what the adapter can learn, and is r=16 across all seven modules a defensible choice for a 306-pair critic or a copy-paste default that could explain the null held-out result?
+
+**Gap closed:** Attention projections (Q, K, V, O) learn *which patterns to attend to* — surface features like value-proposition presence or generic language. MLP projections (gate, up, down) learn *decision logic* — how patterns map to rubric criteria. Both are needed, but spreading r=16 across seven modules gives each roughly 44 training examples of supervision — too few to learn nuanced rubric distinctions beyond shortcuts. The defensible configuration for 306 pairs is to concentrate rank on `v_proj + down_proj` at r=32; r=16 across all seven is ~3.5× over-parameterized relative to dataset size.
+
+**Grounding commit:** `b7c14d5` — added a defended LoRA-configuration paragraph to `model_card.md` §Training Configuration and `methodology_rationale.md` §Adapter Architecture, replacing "defaults were used for reproducibility" with a named tradeoff and an explicit acknowledgment that the null held-out result is consistent with shortcut learning under gradient diffusion.
+
+### Nahom as Explainer
+
+**Question received from Gemechis:** What plays the role of reward model overoptimization in DPO — which has no separate reward model — and why does it produce the specific pattern of mean score rising while pass rate falls?
+
+**Key points delivered:**
+
+- DPO does have an implicit reward model: `r*(x,y) = β·log(π_θ(y|x)/π_ref(y|x))`. The policy ratio is the reward; β is the KL anchor.
+- The mean-up / pass-down fingerprint is the specific signature of soft-dimension proxy misalignment: preference pairs were labeled on continuous rubric dims, hard-fail categories had weak margin signal, so DPO optimized the wrong thing.
+- Gao et al. (2023) showed the same proxy/gold divergence in classic RLHF as a function of KL budget — same pattern, different plumbing.
+- Three corrective dials: (1) increase β by 2–4×, (2) use pass_rate as the checkpoint criterion instead of mean score, (3) IPO (Azar et al. 2023) replaces logistic loss with squared loss that saturates, preventing unbounded margin growth.
+- Provided two ready-to-paste model card paragraphs for §Summary and §Bias, Risks, and Limitations.
+
+**Artifacts:** [`pair_DAY_3/`](pair_DAY_3/)
+
+---
+
 ## Repository Structure
 
 ```
@@ -85,9 +115,18 @@ Knowledge-Gap-Formulation/
 │   ├── grounding_commit.md
 │   ├── sources.md
 │   └── thread.md
-└── pair_DAY_2/
-    ├── question.md               ← Nahom's question to Mikias
-    ├── explainer.md              ← Nahom's retry-logic explainer for Mikias
+├── pair_DAY_2/
+│   ├── question.md               ← Nahom's question to Mikias
+│   ├── explainer.md              ← Nahom's retry-logic explainer for Mikias
+│   ├── morning_call_summary.md
+│   ├── evening_call_summary.md
+│   ├── signoff.md
+│   ├── grounding_commit.md
+│   ├── sources.md
+│   └── thread.md
+└── pair_DAY_3/
+    ├── question.md               ← Nahom's LoRA configuration question to Gemechis
+    ├── explainer.md              ← Nahom's DPO overoptimization explainer for Gemechis
     ├── morning_call_summary.md
     ├── evening_call_summary.md
     ├── signoff.md
@@ -102,5 +141,7 @@ Knowledge-Gap-Formulation/
 
 - **Tweet Thread (Day 1):** [https://x.com/DesalegnNa91842/status/2051733293607879042?s=20]
 - **Tweet Thread (Day 2):** [https://x.com/DesalegnNa91842/status/2052082732239339628?s=20ss]
+- **Tweet Thread (Day 3):** [Link to be added]
 - **Blog Post (Day 1):** [Link to be added]
 - **Blog Post (Day 2):** [Link to be added]
+- **Blog Post (Day 3):** [Link to be added]
