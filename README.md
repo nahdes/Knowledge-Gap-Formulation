@@ -2,7 +2,7 @@
 
 **Program:** 10 Academy TRP1  
 **Week:** 12  
-**Dates:** May 5–8, 2026  
+**Dates:** May 5–9, 2026  
 **Participant:** Nahom Desalegn
 
 ---
@@ -130,11 +130,24 @@ Week 12 uses a structured peer-teaching format. Each day, two participants take 
 
 ---
 
+## Day 5 — [Topic TBD]
+
+**Date:** May 9, 2026  
+**Partner:** TBD  
+**Status:** In progress 🔄
+
+*To be completed before the 21hr UTC submission deadline.*
+
+---
+
 ## Repository Structure
 
 ```
 Knowledge-Gap-Formulation/
 ├── README.md
+├── synthesis.md              ← 1,500-word week synthesis (10 gaps, reading list, tool list)
+├── canonical_list.md         ← Annotated papers, tools, and patterns for FDE cohort canon
+├── portfolio_update.md       ← One-page portfolio improvement summary for hiring review
 ├── pair_DAY_1/
 │   ├── question.md               ← Nahom's question to Yakob
 │   ├── explainer.md              ← Nahom's LoRA explainer for Yakob
@@ -162,26 +175,40 @@ Knowledge-Gap-Formulation/
 │   ├── grounding_commit.md
 │   ├── sources.md
 │   └── thread.md
-└── pair_DAY_4/
-    ├── question.md               ← Nahom's LLM-judge bias question to Melkam
-    ├── explainer.md              ← Nahom's paired bootstrap explainer for Melkam
-    ├── morning_call_summary.md
-    ├── evening_call_summary.md
-    ├── signoff.md
-    ├── grounding_commit.md
-    ├── sources.md
-    └── thread.md
+├── pair_DAY_4/
+│   ├── question.md               ← Nahom's LLM-judge bias question to Melkam
+│   ├── explainer.md              ← Nahom's paired bootstrap explainer for Melkam
+│   ├── morning_call_summary.md
+│   ├── evening_call_summary.md
+│   ├── signoff.md
+│   ├── grounding_commit.md
+│   ├── sources.md
+│   └── thread.md
+└── pair_DAY_5/                   ← To be added May 9, 2026
+    └── ...
 ```
+
+---
+
+## Final Submission Documents
+
+| File | Description |
+|---|---|
+| [`synthesis.md`](synthesis.md) | 1,500-word week synthesis: 10 gaps closed, most surprising insight, canonical reading list and tool list |
+| [`canonical_list.md`](canonical_list.md) | Annotated cohort canon: 11 papers, 4 tools, 4 FDE patterns |
+| [`portfolio_update.md`](portfolio_update.md) | One-page summary of how grounding commits improve Weeks 10–11 portfolio, written for FDE hiring review |
 
 ---
 
 ## Public Artifacts
 
-- **Tweet Thread (Day 1):** [https://x.com/DesalegnNa91842/status/2051733293607879042?s=20]
-- **Tweet Thread (Day 2):** [https://x.com/DesalegnNa91842/status/2052082732239339628?s=20ss]
+- **Tweet Thread (Day 1):** https://x.com/DesalegnNa91842/status/2051733293607879042?s=20
+- **Tweet Thread (Day 2):** https://x.com/DesalegnNa91842/status/2052082732239339628?s=20ss
 - **Tweet Thread (Day 3):** [Link to be added]
 - **Tweet Thread (Day 4):** [Link to be added]
+- **Tweet Thread (Day 5):** [Link to be added]
 - **Blog Post (Day 1):** [Link to be added]
 - **Blog Post (Day 2):** [Link to be added]
 - **Blog Post (Day 3):** [Link to be added]
 - **Blog Post (Day 4):** [Link to be added]
+- **Blog Post (Day 5):** [Link to be added]
