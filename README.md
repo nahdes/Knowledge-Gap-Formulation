@@ -2,7 +2,7 @@
 
 **Program:** 10 Academy TRP1  
 **Week:** 12  
-**Dates:** May 5–7, 2026  
+**Dates:** May 5–8, 2026  
 **Participant:** Nahom Desalegn
 
 ---
@@ -101,6 +101,35 @@ Week 12 uses a structured peer-teaching format. Each day, two participants take 
 
 ---
 
+## Day 4 — Evaluation and Statistics
+
+**Date:** May 8, 2026  
+**Partner:** Melkam Beyene  
+**Status:** Complete ✅
+
+### Nahom as Asker
+
+**Question:** In `scoring_evaluator.py` the `llm_tone_judge()` function uses an LLM sub-judge (OpenRouter Sonnet 4.6) for the `voice_adherence` dimension. The held-out Δ A = +0.0025 is narrower than any plausible systematic judge bias. Which specific biases dominate in a single-output absolute-score setup — as opposed to pairwise comparison — and did the current protocol control for any of them, or is the null result vulnerable to a scoring artifact?
+
+**Gap closed:** Verbosity bias and style-prior bias dominate in single-output scoring; position bias does not apply (no reference output to anchor position). Melkam introduced the **two-uncertainty split**: paired bootstrap CIs measure sampling variance only — they say nothing about judge measurement variance, which at ±0.5–1% dwarfs a Δ of 10⁻³. The correct framing is **"under-identified at this margin"**, not "null result" — the experiment was underpowered on the measurement axis, not just sample size.
+
+**Grounding commit:** Added a 40-line bias-audit block to `llm_tone_judge()` docstring (`scoring_evaluator.py` line 288): names the two dominant biases, lists four design choices that partially control bias (temperature=0, symmetric conditions, deterministic rubric dimensions, 5-point scale anchors), flags three uncontrolled risks (no inter-judge calibration, no score–length diagnostic, no human gold set), and corrects the epistemic status to "under-identified."
+
+### Nahom as Explainer
+
+**Question received from Melkam:** In a Sales-Evaluation-Bench where the same test examples score multiple methods, which CI method is correct — regular bootstrap or paired bootstrap? If you pick the wrong one, how much does it change the uncertainty range, and could it flip the deploy verdict?
+
+**Key points delivered:**
+
+- Paired bootstrap resamples task pairs `(a_i, b_i)` intact; regular bootstrap resamples each condition independently, dropping the covariance term from `Var(A−B) = Var(A) + Var(B) − 2·Cov(A,B)`.
+- CI half-width ratio: `HW_unpaired / HW_paired = √(1 / (1 − ρ))` — at ρ=0.85 (typical for same-task-set benchmarks), unpaired is **2.6× wider** than it should be.
+- Concrete deploy-flip: with n=52 and Δ=+0.035, paired CI is [+0.005, +0.065] (deploy); unpaired CI is [−0.042, +0.112] (don't deploy). Same data, wrong method, wrong decision.
+- Rule: use paired bootstrap whenever methods share test examples. Unpaired is only correct for disjoint test sets.
+
+**Artifacts:** [`pair_DAY_4/`](pair_DAY_4/)
+
+---
+
 ## Repository Structure
 
 ```
@@ -124,9 +153,18 @@ Knowledge-Gap-Formulation/
 │   ├── grounding_commit.md
 │   ├── sources.md
 │   └── thread.md
-└── pair_DAY_3/
-    ├── question.md               ← Nahom's LoRA configuration question to Gemechis
-    ├── explainer.md              ← Nahom's DPO overoptimization explainer for Gemechis
+├── pair_DAY_3/
+│   ├── question.md               ← Nahom's LoRA configuration question to Gemechis
+│   ├── explainer.md              ← Nahom's DPO overoptimization explainer for Gemechis
+│   ├── morning_call_summary.md
+│   ├── evening_call_summary.md
+│   ├── signoff.md
+│   ├── grounding_commit.md
+│   ├── sources.md
+│   └── thread.md
+└── pair_DAY_4/
+    ├── question.md               ← Nahom's LLM-judge bias question to Melkam
+    ├── explainer.md              ← Nahom's paired bootstrap explainer for Melkam
     ├── morning_call_summary.md
     ├── evening_call_summary.md
     ├── signoff.md
@@ -142,6 +180,8 @@ Knowledge-Gap-Formulation/
 - **Tweet Thread (Day 1):** [https://x.com/DesalegnNa91842/status/2051733293607879042?s=20]
 - **Tweet Thread (Day 2):** [https://x.com/DesalegnNa91842/status/2052082732239339628?s=20ss]
 - **Tweet Thread (Day 3):** [Link to be added]
+- **Tweet Thread (Day 4):** [Link to be added]
 - **Blog Post (Day 1):** [Link to be added]
 - **Blog Post (Day 2):** [Link to be added]
 - **Blog Post (Day 3):** [Link to be added]
+- **Blog Post (Day 4):** [Link to be added]
